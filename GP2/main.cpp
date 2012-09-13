@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 #endif
 {
 	CWin32Window * pWin=new CWin32Window();
-	pWin->init(TEXT("My First Window"),860,640,false);
+	pWin->init(TEXT("Anthony Denovan"),860,640,false);
 
 	while(pWin->running()){
 		pWin->checkForWindowMessages();
