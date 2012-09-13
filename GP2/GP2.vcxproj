@@ -77,11 +77,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameApplication.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameApplication.h" />
     <ClInclude Include="Win32Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ScreenSpace.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
