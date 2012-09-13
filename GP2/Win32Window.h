@@ -1,3 +1,6 @@
+//Header Guards- another way of doing this. 
+//only includes this header file once in the compilation.
+
 #pragma once
 
 #include <string>

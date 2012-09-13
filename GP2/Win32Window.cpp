@@ -19,6 +19,7 @@ CWin32Window::~CWin32Window(void)
 
 }
 
+
 bool CWin32Window::init(const wstring &title,int width,int height,bool fullscreen)
 {
 	m_bIsFullScreen=fullscreen;
