@@ -11,7 +11,7 @@ public:
 	~CGameApplication(void);
 
 	bool init();
-	bool run();
+	void run();
 
 private:
 	bool initGraphics();

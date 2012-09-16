@@ -25,5 +25,37 @@ CGameApplication::~CGameApplication(void)
 		delete m_pWindow;
 		m_pWindow = NULL;
 	}
-		
 }
+
+bool CGameApplication::init()
+{
+	if (!initWindow())
+			return false;
+
+	if (!initGraphics())
+			return false;
+
+	return true;
+}
+
+void CGameApplication::run()
+{
+	while (m_pWindow->running())
+	{
+		if (!m_pWindow->checkForWindowMessages())
+		{
+			update();
+			render();
+		}
+	}
+}
+
+void CGameApplication::render()
+{
+}
+
+bool  CGameApplication::initWindow()
+{
+	return true;
+}
+
