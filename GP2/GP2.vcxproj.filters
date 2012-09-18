@@ -16,11 +16,11 @@
     <Filter Include="Window">
       <UniqueIdentifier>{ec1bf3a5-8d61-41da-8ef5-06fc869dffcd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EffectFiles">
-      <UniqueIdentifier>{e7e0afe1-4082-46ca-bf80-1af47b3ae17f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{6372bba7-c9e3-46e8-8d5f-15bd5c6c2f57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects">
+      <UniqueIdentifier>{e7e0afe1-4082-46ca-bf80-1af47b3ae17f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ScreenSpace.fx">
-      <Filter>EffectFiles</Filter>
+      <Filter>Effects</Filter>
     </None>
   </ItemGroup>
 </Project>

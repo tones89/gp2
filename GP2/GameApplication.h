@@ -12,11 +12,11 @@ public:
 
 	bool init();
 	void run();
+	bool initGame();
 
 private:
 	bool initGraphics();
 	bool initWindow();
-
 	void render();
 	void update();
 
@@ -25,5 +25,10 @@ private:
 	IDXGISwapChain * m_pSwapChain;
 	ID3D10RenderTargetView * m_pRenderTargetView;
 	CWin32Window * m_pWindow;
+	ID3D10Buffer*	m_pVertexBuffer;
+	ID3D10InputLayout*	m_pVertexLayout;
+	ID3D10Effect*	m_pEffect;
+	ID3D10EffectTechnique*	m_pTechnique;
+
 
 };
