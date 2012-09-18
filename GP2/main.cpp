@@ -4,6 +4,7 @@
 #include <Windows.h>
 #endif
 
+#include "GameApplication.h"
 #include "Win32Window.h"
 
 //Check to see if we are on windows
@@ -17,7 +18,32 @@ int WINAPI WinMain(HINSTANCE hInstance,
 int main(int argc, char **argv)
 #endif
 {
-	CWin32Window * pWin=new CWin32Window();
+	CGameApplication *pApp = new CGameApplication();
+
+	if (!pApp->init())
+	{
+		if(pApp)
+		{
+			delete pApp;
+			pApp = NULL;
+			return 1;
+		}
+	}
+
+	pApp->run();
+
+	if (pApp)
+	{
+		delete pApp;
+		pApp = NULL;
+	}
+	return 0;
+
+
+	/*CWin32Window * pWin=new CWin32Window();
+
+	
+
 	pWin->init(TEXT("Anthony Denovan"),860,640,false);
 
 	while(pWin->running()){
@@ -26,6 +52,6 @@ int main(int argc, char **argv)
 
 	delete pWin;
 
-	return 0;
+	return 0;*/
 }
 
