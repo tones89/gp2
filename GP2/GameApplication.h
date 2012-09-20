@@ -27,7 +27,7 @@ private:
 	ID3D10EffectTechnique*	m_pTechnique;
 
 	ID3D10DepthStencilView * m_pDepthStencilView;
-	ID3D10Texture2D * m_pDepthStenciTexture;
+	ID3D10Texture2D * m_pDepthStencilTexture;
 
 	CWin32Window * m_pWindow;
 	ID3D10Buffer*	m_pVertexBuffer;

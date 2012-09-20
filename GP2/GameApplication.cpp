@@ -13,7 +13,7 @@ CGameApplication::CGameApplication(void)
 	m_pSwapChain=NULL;
 	m_pVertexBuffer=NULL;
 	m_pDepthStencilView=NULL;
-	m_pDepthStenciTexture=NULL;
+	m_pDepthStencilTexture=NULL;
 }
 
 CGameApplication::~CGameApplication(void)
@@ -29,6 +29,13 @@ CGameApplication::~CGameApplication(void)
 
 	if(m_pRenderTargetView)
 		m_pRenderTargetView->Release();
+
+	if(m_pDepthStencilTexture)
+		m_pRenderTargetView->Release();
+
+	if(m_pDepthStencilView)
+		m_pDepthStencilView->Release();
+
 
 	if(m_pSwapChain)
 		m_pSwapChain->Release();
@@ -198,9 +205,6 @@ bool CGameApplication::initGraphics()
 
 		D3D10_TEXTURE2D_DESC descDepth;
 
-		//Used to Create the texture
-		if(FAILED(m_pD3D10Device->CreateTexture2D(&descDepth,NULL,&m_pDepthStenciTexture)))
-			return false;
 		//CREATING THE DEPTH BUFFER-  USED TO MOVE TO 3D SCENE. DEPTH STENCIL IS USED TO BIND THIS TO THE PIPELINE
 
 		descDepth.Width = width;
@@ -215,10 +219,21 @@ bool CGameApplication::initGraphics()
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
 
+		//Used to Create the texture
+		if(FAILED(m_pD3D10Device->CreateTexture2D(&descDepth,NULL,&m_pDepthStencilTexture)))
+			return false;
+
+		D3D10_DEPTH_STENCIL_VIEW_DESC descDSV;
+		descDSV.Format = descDepth.Format;
+		descDSV.ViewDimension = D3D10_DSV_DIMENSION_TEXTURE2D;
+		descDSV.Texture2D.MipSlice = 0;
+		
+		if(FAILED(m_pD3D10Device->CreateDepthStencilView(
+			m_pDepthStencilTexture,&descDSV,&m_pDepthStencilView)))
+			return false;
 
 
-
-		m_pD3D10Device->OMSetRenderTargets(1,&m_pRenderTargetView,NULL);
+		m_pD3D10Device->OMSetRenderTargets(1,&m_pRenderTargetView,m_pDepthStencilView);
 
 		D3D10_VIEWPORT vp;
 		vp.Width = width;
@@ -236,6 +251,9 @@ void CGameApplication::render()
 {
 	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};
 	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,clearColor);
+
+
+	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView,D3D10_CLEAR_DEPTH,1.0f,0);
 
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//DRAW CALL'S MUST GO HERE BETWEEN
