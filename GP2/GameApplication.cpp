@@ -71,13 +71,14 @@ bool CGameApplication::initGame()
 #if defined (DEBUG) ||defined(_DEBUG )
 	dwShaderFlags |= D3D10_SHADER_DEBUG;
 #endif
+	ID3D10Blob* pErrors = NULL;
 
-	if (FAILED(D3DX10CreateEffectFromFile(TEXT("\\Effects\\ScreenSpace.fx"),
+	if (FAILED(D3DX10CreateEffectFromFile(TEXT("ScreenSpace.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
-		NULL,NULL )))
+		&pErrors,NULL )))
 	{
-		MessageBox(NULL,TEXT("The FX file cannot be loaded. Please run this executable from the directory that contains the FX file"),
-			TEXT("Error"),MB_OK);
+		MessageBoxA(NULL,(char*)pErrors->GetBufferPointer(),
+			"error",MB_OK);
 		return false;
 	}
 
@@ -119,7 +120,8 @@ bool CGameApplication::initGame()
 	UINT offset = 0;
 	m_pD3D10Device->IASetVertexBuffers(0,1,&m_pVertexBuffer,&stride,&offset);
 
-	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	
 	return true;
 }
 
@@ -210,9 +212,20 @@ void CGameApplication::render()
 	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};
 	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,clearColor);
 
-
+	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//DRAW CALL'S MUST GO HERE BETWEEN
+
+	D3D10_TECHNIQUE_DESC techniqueDesc;
+	m_pTechnique->GetDesc(&techniqueDesc);
+
+	for(UINT p = 0; p<techniqueDesc.Passes; ++p)
+	{
+		m_pTechnique->GetPassByIndex(p)->Apply(0);
+		m_pD3D10Device->Draw(3,0);
+	}
 	m_pSwapChain->Present(0,0);
+
+	
 }
 
 bool  CGameApplication::initWindow()
