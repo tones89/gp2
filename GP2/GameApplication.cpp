@@ -12,6 +12,8 @@ CGameApplication::CGameApplication(void)
 	m_pRenderTargetView=NULL;
 	m_pSwapChain=NULL;
 	m_pVertexBuffer=NULL;
+	m_pDepthStencilView=NULL;
+	m_pDepthStenciTexture=NULL;
 }
 
 CGameApplication::~CGameApplication(void)
@@ -192,6 +194,29 @@ bool CGameApplication::initGraphics()
 			return false;
 		}
 		pBackBuffer->Release();
+
+
+		D3D10_TEXTURE2D_DESC descDepth;
+
+		//Used to Create the texture
+		if(FAILED(m_pD3D10Device->CreateTexture2D(&descDepth,NULL,&m_pDepthStenciTexture)))
+			return false;
+		//CREATING THE DEPTH BUFFER-  USED TO MOVE TO 3D SCENE. DEPTH STENCIL IS USED TO BIND THIS TO THE PIPELINE
+
+		descDepth.Width = width;
+		descDepth.Height = height;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D32_FLOAT;  //Format of the texture--- will hold 32bit floating point
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D10_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D10_BIND_DEPTH_STENCIL;  //how the buffer will be bound to the pipeline.
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
+
+
+
 
 		m_pD3D10Device->OMSetRenderTargets(1,&m_pRenderTargetView,NULL);
 
