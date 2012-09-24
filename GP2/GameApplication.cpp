@@ -154,10 +154,30 @@ bool CGameApplication::initGame()
 	D3DXMatrixPerspectiveFovLH(&m_matProjection,(float)D3DX_PI*0.25f,vp.Width/(float)vp.Height,0.1f,100.0f);
 	//===============================================
 
-	/*m_pViewMatrixVariable = 
-		m_pEffect->GetVariableByName*/
+
+	//=========RETRIEVE THE EFFECT VARIABLES SO THEY CAN BE SENT TO TH EEFFECT
+	m_pViewMatrixVariable = 
+		m_pEffect->GetVariableByName("matView")->AsMatrix();
+	m_pProjectionMatrixVariable =
+		m_pEffect->GetVariableByName("matProjection")->AsMatrix();
+	//===========================================================================
+
+	m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);
 	
+	//=========USED TO SET THE SET THE POS,ROT AND SCALE VECTORS OF THE OBJECT
+	m_vecPosition = D3DXVECTOR3(0.0f,0.0f,0.0f);
+	m_vecScale = D3DXVECTOR3(1.0f,1.0f,1.0f);
+	m_vecRotation = D3DXVECTOR3(0.0f,0.0f,0.0f);
+	//===========================================================================
+
+	//=========USED TO RETRIEVE THE WORLD MATRIX FROM THE EFFECT AND SEND IT TO THE EFFECT.
+	m_pWorldMatrixVariable=
+		m_pEffect->GetVariableByName("matWorld")->AsMatrix();
+	//=====================================================================================
+
 	return true;
+
+
 }
 
 
@@ -174,8 +194,19 @@ void CGameApplication::run()
 	}
 }
 
+
 void CGameApplication::update()
 {
+	D3DXMatrixScaling(&m_matScale,m_vecScale.x,m_vecScale.y,m_vecScale.z);
+
+	D3DXMatrixRotationYawPitchRoll(&m_matRotation,m_vecRotation.y,m_vecRotation.x,m_vecRotation.z);
+
+	D3DXMatrixTranslation(&m_matTranslation,m_vecPosition.x,m_vecPosition.y,m_vecPosition.z);
+
+	D3DXMatrixMultiply(&m_matWorld,&m_matScale,&m_matRotation);
+
+	D3DXMatrixMultiply(&m_matWorld,&m_matWorld,&m_matTranslation);
+
 }
 
 bool CGameApplication::initGraphics()
@@ -282,7 +313,10 @@ void CGameApplication::render()
 	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView,D3D10_CLEAR_DEPTH,1.0f,0);
 
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//DRAW CALL'S MUST GO HERE BETWEEN
+	
+	//=========DRAW CALL'S MUST GO WITHIN HERE=========
+
+	m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);	//SENDS THE VIEW MATRIX TO THE EFFECT
 
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	m_pTechnique->GetDesc(&techniqueDesc);

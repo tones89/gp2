@@ -42,6 +42,7 @@ private:
 
 	ID3D10EffectTechnique*	m_pTechnique;
 
+	ID3D10EffectMatrixVariable* m_pWorldMatrixVariable;
 	
 	ID3D10EffectMatrixVariable* m_pViewMatrixVariable;
 
@@ -51,5 +52,17 @@ private:
 
 	D3DXMATRIX m_matProjection;
 	
+	D3DXMATRIX m_matWorld;	//World MAtrix
+	D3DXMATRIX m_matScale;	//The scale matrix
+	D3DXMATRIX m_matRotation;	//The Rotation Matrix
+	D3DXMATRIX m_matTranslation;	//The translation Matrix
+	
+	//============THE VECTORS USED TO REPRESENT THE POS,ROT AND SCALE OF THE OBJECT=========
+	D3DXVECTOR3 m_vecPosition;
+	D3DXVECTOR3 m_vecRotation;
+	D3DXVECTOR3 m_vecScale;				
+	//=======================================================================================
+
+
 
 };
