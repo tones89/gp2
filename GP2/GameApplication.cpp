@@ -18,8 +18,7 @@ CGameApplication::CGameApplication(void)
 
 CGameApplication::~CGameApplication(void)
 {
-	if (m_pD3D10Device)
-		m_pD3D10Device->ClearState();
+	
 
 	if(m_pVertexBuffer)
 		m_pVertexBuffer->Release();
@@ -39,6 +38,9 @@ CGameApplication::~CGameApplication(void)
 	
 	if(m_pSwapChain)
 		m_pSwapChain->Release();
+
+	if (m_pD3D10Device)
+		m_pD3D10Device->ClearState();
 
 	if(m_pD3D10Device)
 		m_pD3D10Device->Release();
@@ -82,7 +84,7 @@ bool CGameApplication::initGame()
 #endif
 	ID3D10Blob* pErrors = NULL;
 
-	if (FAILED(D3DX10CreateEffectFromFile(TEXT("ScreenSpace.fx"),
+	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
 		&pErrors,NULL )))
 	{
@@ -135,8 +137,8 @@ bool CGameApplication::initGame()
 	D3DXVECTOR3 cameraUp(0.0f,0.1f,0.0f);
 	//==========================================
 
-	//=========CREATING THE VIEW PROJECTION MATRIX========= 
-	D3DXMatrixLookAtLH(&m_matView,&cameraPos,&cameraLook,&cameraUp);//THIS FUNCTION CALCULATES THE VIEW MATRIX USING THE CAM VARS FROM ABOVE;   
+	//THIS FUNCTION CALCULATES THE VIEW MATRIX USING THE CAM VARS FROM ABOVE;
+	D3DXMatrixLookAtLH(&m_matView,&cameraPos,&cameraLook,&cameraUp);   
 	//======================================================
 
 	//=========USED TO GRAB THE VIEWPORT, WHICH HOLDS THE SCREEN DIMENSIONS=========
@@ -213,10 +215,14 @@ bool CGameApplication::initGraphics()
 {
 	RECT windowRect;
 
+	//===============GETS THE SIZE OF THE CURRENT WINDOW=========
 	GetClientRect(m_pWindow->getHandleToWindow(),&windowRect);
+	//============================================================
 
+	//=========STORES THE WIDTH AND HEIGHT OF THE WINDOW USING THE CURRENT DIMENSIONS=========
 	UINT width = windowRect.right-windowRect.left;
 	UINT height = windowRect.bottom-windowRect.top;
+	//=======================================================================================
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
@@ -309,8 +315,13 @@ void CGameApplication::render()
 	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};
 	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,clearColor);
 
-
+	//=========USED TO CLEAR THE DEPTH BUFFER=========
+	//1ST PARAM = A POINTER TO THE STENCIL VIEW
+	//2ND PARAM = THE CLEAR FLAGS
+	//3RD PARAM = THE VAL TO CLEAR DEPTH BUFFER WITH
+	//4TH PARAM = THE VAL TO CLEAR THE STENC BUFFER WITH
 	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView,D3D10_CLEAR_DEPTH,1.0f,0);
+	//==================================================
 
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
