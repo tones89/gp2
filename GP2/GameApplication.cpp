@@ -318,6 +318,8 @@ void CGameApplication::render()
 
 	m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);	//SENDS THE VIEW MATRIX TO THE EFFECT
 
+	m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
+
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	m_pTechnique->GetDesc(&techniqueDesc);
 
