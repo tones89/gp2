@@ -5,6 +5,8 @@ struct Vertex
 	D3DXVECTOR3 Pos;
 };
 
+
+//======THE CLASS' CONSTRUCTOR======
 CGameApplication::CGameApplication(void)
 {
 	m_pWindow=NULL;
@@ -15,7 +17,9 @@ CGameApplication::CGameApplication(void)
 	m_pDepthStencilView=NULL;
 	m_pDepthStencilTexture=NULL;
 }
+//====================================
 
+//======THE CLASS' DESTRUCTOR======
 CGameApplication::~CGameApplication(void)
 {
 	
@@ -54,7 +58,10 @@ CGameApplication::~CGameApplication(void)
 		m_pWindow = NULL;
 	}
 }
+//=======================================
 
+
+//=========USED TO INITIALIZE THE GAME=========
 bool CGameApplication::init()
 {
 	if (!initWindow())
@@ -68,6 +75,8 @@ bool CGameApplication::init()
 
 	return true;
 }
+//================================================
+
 
 bool CGameApplication::initGame()
 {
@@ -181,9 +190,10 @@ bool CGameApplication::initGame()
 
 
 }
+//====================================================================================
 
-
-
+//=========THIS METHOD CONTAINS THE LOOP WHICH CHECKS FOR========= 
+//=========WINDOWS MESSAGES, UPDATES AND RENDERS THE SCENE=========
 void CGameApplication::run()
 {
 	while (m_pWindow->running())
@@ -195,8 +205,10 @@ void CGameApplication::run()
 		}
 	}
 }
+//==================================================================
 
 
+//=========USED TO UPDATE THE GAMESTATE=========
 void CGameApplication::update()
 {
 	D3DXMatrixScaling(&m_matScale,m_vecScale.x,m_vecScale.y,m_vecScale.z);
@@ -210,7 +222,10 @@ void CGameApplication::update()
 	D3DXMatrixMultiply(&m_matWorld,&m_matWorld,&m_matTranslation);
 
 }
+//==============================================
 
+
+//=========USED TO INITIALIZE DIRECT3D10=========
 bool CGameApplication::initGraphics()
 {
 	RECT windowRect;
@@ -224,40 +239,79 @@ bool CGameApplication::initGraphics()
 	UINT height = windowRect.bottom-windowRect.top;
 	//=======================================================================================
 
-	UINT createDeviceFlags = 0;
-#ifdef _DEBUG
+
+	//=========CREATING THE DEVICE========= 
+	UINT createDeviceFlags = 0;		//USED TO HOLD FLAGS FOR DEVICE CREATION
+#ifdef _DEBUG	//CHECKS TO SEE IF DEV ENVIRONMENT IS IN DEBUG MODE
 		createDeviceFlags|=D3D10_CREATE_DEVICE_DEBUG;
 #endif
-		DXGI_SWAP_CHAIN_DESC sd;
-		ZeroMemory( &sd, sizeof(sd));
+	//======================================
 
-		if (m_pWindow->isFullScreen())
+
+		DXGI_SWAP_CHAIN_DESC sd;	//HOLDS ALL OPTIONS FOR THE CREATION OF THE SWAP CHAIN
+		ZeroMemory( &sd, sizeof(sd));	//TAKES IN A MEM ADDRESS AND SIZE OF VARIABLE AND DEFAULTS THIS TO ZERO
+
+		//=========CHECKS THE STATE OF THE CURRENT WINDOW=========
+		
+		if (m_pWindow->isFullScreen())	//IF FULLCREEN THEN THERE ARE 2 BUFFERS- FRONT AND BACK
 			sd.BufferCount = 2;
 		else
-			sd.BufferCount = 1;
+			sd.BufferCount = 1;		// IF NOT THEN WE HAVE ONE- THE DESKTOP ACTS AS THE BACKBUFFER
 
-		sd.OutputWindow = m_pWindow->getHandleToWindow();
-		sd.Windowed =(BOOL)(!m_pWindow->isFullScreen());
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-
-		sd.BufferDesc.Width = width;
-		sd.BufferDesc.Height = height;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.RefreshRate.Numerator=60;
-		sd.BufferDesc.RefreshRate.Denominator=1;
-
+		//=======================================================================================
 		
+		
+		sd.OutputWindow = m_pWindow->getHandleToWindow();	//ASSIGNS WIN HANDLE TO THE SWAPCHAIN.
+		sd.Windowed =(BOOL)(!m_pWindow->isFullScreen());	//SPECIFIES IF WE ARE IN WINDOWED MODE OR NOT USING THE NOT(!)OPERATOR.
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	//STATES THAT BUFFER WILL BE USED AS A RENDER TARGET( CAN BE DRAWN TO.
+
+		//=========ANTIALISING(MULTISAMPLING) PARAMS=========
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;	//SET TO 0 = OFF FOR PERFORMANCE ISSUES
+		//===================================================
+
+		//=========SETS THE OPTIONS FOR THE BUFFER(S) INSIDE THE SWAP CHAIN
+
+		sd.BufferDesc.Width = width;	//SETS THE WIDTH OF THE BUFFER- EQUAL TO THE WINDOW
+		sd.BufferDesc.Height = height;	//SETS THE HEIGHT OF THE BUFFER- EQUAL TO THE WINDOW
+		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	//SETS THE FORMAT OF THE BUFFER,  8 BYTES FOR EACH (rgb)
+		sd.BufferDesc.RefreshRate.Numerator=60;		// SETS THE REFRESH RATE TO 60 HERTZ USING AN UPDATE ON THE VERT BLANK
+		sd.BufferDesc.RefreshRate.Denominator=1;	//""	""	""	""	""	""	""	
+		//==================================================================
+		
+
+		//=========THIS FUNCTION WILL CREATE A SWAP CHAIN AND DEVICE WITHIN ONE CALL, SURROUNDING IN IF-FAILED TO CHECK FOR FAILURE=========
+
+		//1ST PARAM = A POINTER TO AN IDXGIAPADTER, WHICH IS ANALOGOUS TO A PHYS GRAPH CARDS, NULL WILL USE THE DEFAULT.
+		//2ND PARAM = THE TYPE OF DRIVER FLAG- IN THIS CASE THE HARDWARE DEVICE.
+		//3RD PARAM = A HANDLE TO A MODULE(DLL)CONTAINING SOFT IMPLEMENATION OF D3D10, ALMST ALWAYS NULL
+		//4TH PARAM = OPTIONAL, USED TO GIVE ADDITIONAL OPTIONS UPON DEVICE CREATION, IN THIS INSTANCE PUTTING DEVICE INTO DEBUG.
+		//5TH PARAM =  THE VERSION OF D3D10 WE ARE USING
+		//6TH PARAM = A POINTER TO THE SWAP CHAIN DESC' USING MEMORY ADD OPERATOR(&). HOLDS THE OPTIONS FOR THE SWAP CHAIN CREATION
+		//7TH PARAM = AN ADDRESS OF A POINTER TO THE SWAP CHAIN INTERFACE , USED TO INITIALIZE THE IDXGISWAP CHAIN POINTER
+		//8th PARAM = AN ""		""	""	""	""	""	""	""D3D10 DEVICE, ""		""		""	THE ID3D10DEVICE POINTER
 		if(FAILED(D3D10CreateDeviceAndSwapChain(NULL,D3D10_DRIVER_TYPE_HARDWARE,NULL,createDeviceFlags,
 			D3D10_SDK_VERSION,&sd,&m_pSwapChain,&m_pD3D10Device)))
 			return false;
+		//=================================================================================================================================
+
+		//=========ASSOCIATE A BUFFER FROM THE SWAP CHAIN WITH THE RENDER TARGET VIEW =========
+
+		ID3D10Texture2D *pBackBuffer;	//THE BUFFER IS OF TYPE TEXTURE 2D, A 3D ARRAY OF TEXELS, (TEXTURE PIXELS).
 		
-		ID3D10Texture2D *pBackBuffer;
+		//=========GET BUFFER FUNCTION IS USED TO RETRIEVE THE AFORMENTIONED BUFFER=========
+		//1ST PARAM = INDEX OF THE BUFFER WITHIN SWAP CHAIN, ZERO WILL RETRIEVE BACKBUFFER
+		//2ND PARAM = ID OF THE INTERCFACE WE ARE RETRIEVING FROM SWAP CHAIN, uuiodf FUNCTION RETRIEVES THE UNIQUE ID OF AN INTERFACE
+		//3RD PARAM = A POINTER TO ADDRESS OF A BUFFER, VOID BECAUSE THE FUNCTION CAN TAKE ANY TYPE DEPENDING ON VALUE OF 2ND PARAM
 		if(FAILED(m_pSwapChain->GetBuffer(0,__uuidof(ID3D10Texture2D),(void**)&pBackBuffer)))
 			return false;
+		//=======================================================================================
 
+
+		//=========CREATES THE RENDER TARGET VIEW=========
+		//1ST PARAM = POINTER TO A RESOURCE, TEXTURE2D INTERFACE INHERITS FROM THIS SO IT CAN BE PASSED TO THIS FUNCTION.
+		//2ND PARAM = POINTER TO A STRUCT WHICH DEFINES OPTIONS FOR ACCESSING COMPONENTS OF RENDER TARGET I.E SUB AREAS
+		//3RD PARAM =POINTER TO ADDRESS OF RENDER TARGET VIEW
 		if(FAILED(m_pD3D10Device->CreateRenderTargetView(pBackBuffer,NULL,&m_pRenderTargetView)))
 		{
 			pBackBuffer->Release();
@@ -296,20 +350,30 @@ bool CGameApplication::initGraphics()
 			return false;
 
 
-		m_pD3D10Device->OMSetRenderTargets(1,&m_pRenderTargetView,m_pDepthStencilView);
 
-		D3D10_VIEWPORT vp;
-		vp.Width = width;
-		vp.Height = height;
-		vp.MinDepth = 0.0f;
+		///=========BINDS AN ARRAY OF RENDER TARGETS TO OUTPUT MERGER STAGE=========
+		//1ST PARAM = THE AMOUNT OF RENDER TARGETS TO BE BOUND TO PIPELINE
+		//2ND PARAM = A POINTER TO AN ARRAY OF RENDER TARGETS
+		//3RD PARAM = POINTER TO DEPTH STENCIL VIEW, USED TO HOLD DEPTH INFO FOR SCENCE
+		m_pD3D10Device->OMSetRenderTargets(1,&m_pRenderTargetView,m_pDepthStencilView);
+		//==============================================================================
+
+		//=========SETTING UP A VIEWPORT ALLOWING OBJECTS TO BE ALLIGNED CORRECTLY=========
+		D3D10_VIEWPORT vp;	//INSTANCE OF D3D10VIEWPORT
+		vp.Width = width;	//SAME AS WINDOW
+		vp.Height = height;	//SAM AS WINDOW
+		vp.MinDepth = 0.0f;	
 		vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0; 
-		m_pD3D10Device->RSSetViewports(1,&vp);
-
+		m_pD3D10Device->RSSetViewports(1,&vp);	//SETS VIEWPORT WHICH IS BOUND TO PIPELINE
+		//==============================================================================
 	return true;
 }
+//===============================================
 
+
+//=========USED TO INSTANCIATE AND MANAGE THE DRAWING=========
 void CGameApplication::render()
 {
 	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};
@@ -343,15 +407,20 @@ void CGameApplication::render()
 
 	
 }
+//============================================================
 
+//=========USED TO INITIALIZE  A WINDOW=========
 bool  CGameApplication::initWindow()
 {
-	m_pWindow=new CWin32Window();
+	
+	m_pWindow=new CWin32Window();	//A new instanxe of the win32Window
 
+	//=========CALLING THE INIT FUNCTION TO CREATE THE WINDOW=========
 	if (!m_pWindow->init(TEXT("Lab1-Create Device"),800,640,false))
 		return false;
-
+	//==================================================================
 
 	return true;
 }
+//=============================================
 
