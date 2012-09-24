@@ -80,12 +80,12 @@ bool CGameApplication::init()
 
 bool CGameApplication::initGame()
 {
-	D3D10_BUFFER_DESC bd;
-	bd.Usage = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(Vertex)*3;
-	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
+	D3D10_BUFFER_DESC bd;	
+	bd.Usage = D3D10_USAGE_DEFAULT;		//DESC OF HOW THE BUFFER IS READ/WRITTEN TO, DEFAULT STIPULATES THAT THE RESOURCE WILL BE WRITTEN BY CPU
+	bd.ByteWidth = sizeof(Vertex)*3;	//THE SIZE OF BUFFER( IN THIS CASE 3 VERTICES)
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;	//THE TYPE OF BUFFER, IN THIS CASE VERTEX BUFFER
+	bd.CPUAccessFlags = 0;	//USED TO SPECIFY IF THE BUFFER CAN BE READ/WRITTEN BY CPU. ZERO MEANS THE CPU CANT ACCESS THE BUFFER ONCE CREATED
+	bd.MiscFlags = 0;	//USED FOR ADDITIONAL OPTIONS, 0 MEANING NO ADDITIONAL OPTIONS
 
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 #if defined (DEBUG) ||defined(_DEBUG )
@@ -93,7 +93,7 @@ bool CGameApplication::initGame()
 #endif
 	ID3D10Blob* pErrors = NULL;
 
-	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
+	if (FAILED(D3DX10CreateEffectFromFile(TEXT("ScreenSpace.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
 		&pErrors,NULL )))
 	{
@@ -104,19 +104,27 @@ bool CGameApplication::initGame()
 
 	m_pTechnique=m_pEffect->GetTechniqueByName("Render");
 
+	//=========DEFINES A SIMPLE ARRAY OF 3 VERTICES=========
 	Vertex vertices[] = 
 	{
 		D3DXVECTOR3(0.0f,0.5f,0.5f),
-		D3DXVECTOR3(0.5f,-0.5f,0.5f),
+		D3DXVECTOR3(0.5f,-0.5f,-0.5f),
 		D3DXVECTOR3(-0.5,-0.5f,0.5f),
+		
 	};
+	//=====================================================
+
 
 	D3D10_SUBRESOURCE_DATA initData;
 	initData.pSysMem = vertices;
 
+	//=========CREATING THE BUFFER=========
+	//1ST PARAM = POINTER TO BUFFER DESCRIPTION
+	//2ND PARAM = POINTER TO RESOURCE DATA
+	//3RD PARAM = A MEMORY ADDRESS OF A POINTER TO A BUFFER
 	if (FAILED(m_pD3D10Device->CreateBuffer(&bd,&initData,&m_pVertexBuffer)))
 			return false;
-
+	//=======================================
 	D3D10_INPUT_ELEMENT_DESC layout[] = 
 	{
 
@@ -376,8 +384,9 @@ bool CGameApplication::initGraphics()
 //=========USED TO INSTANCIATE AND MANAGE THE DRAWING=========
 void CGameApplication::render()
 {
-	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};
-	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,clearColor);
+
+	float clearColor[4] = {0.0f,0.125f,0.3f,1.0f};	//SETTING AN FLOAT ARRAY OF COLOURS(rgb&ALPHA)WITH VALUES FROM 0-1 FOR EACH
+	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,clearColor);	//USES THE VAR ABOVE TO SET THE RENDER TARGET COLOUR
 
 	//=========USED TO CLEAR THE DEPTH BUFFER=========
 	//1ST PARAM = A POINTER TO THE STENCIL VIEW
@@ -403,7 +412,7 @@ void CGameApplication::render()
 		m_pTechnique->GetPassByIndex(p)->Apply(0);
 		m_pD3D10Device->Draw(3,0);
 	}
-	m_pSwapChain->Present(0,0);
+	m_pSwapChain->Present(0,0);	//USED TO FLIP THE SWAP CHAIN
 
 	
 }
