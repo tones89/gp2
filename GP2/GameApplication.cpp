@@ -36,7 +36,7 @@ CGameApplication::~CGameApplication(void)
 	if(m_pDepthStencilView)
 		m_pDepthStencilView->Release();
 
-
+	
 	if(m_pSwapChain)
 		m_pSwapChain->Release();
 
@@ -129,7 +129,33 @@ bool CGameApplication::initGame()
 	UINT offset = 0;
 	m_pD3D10Device->IASetVertexBuffers(0,1,&m_pVertexBuffer,&stride,&offset);
 
+	//=========SETTING UP THE CAMERA=========
+	D3DXVECTOR3 cameraPos(0.0f,0.0f,-10.0f);
+	D3DXVECTOR3 cameraLook(0.0f,0.0f,1.0f);
+	D3DXVECTOR3 cameraUp(0.0f,0.1f,0.0f);
+	//==========================================
 
+	//=========CREATING THE VIEW PROJECTION MATRIX========= 
+	D3DXMatrixLookAtLH(&m_matView,&cameraPos,&cameraLook,&cameraUp);//THIS FUNCTION CALCULATES THE VIEW MATRIX USING THE CAM VARS FROM ABOVE;   
+	//======================================================
+
+	//=========USED TO GRAB THE VIEWPORT, WHICH HOLDS THE SCREEN DIMENSIONS=========
+	D3D10_VIEWPORT vp;  
+	UINT numViewPorts = 1;
+	m_pD3D10Device->RSGetViewports(&numViewPorts,&vp);
+	//=================================================================================
+
+	//=========CREATES THE PROJECTION MATRIX=========
+	//D3DXMATRIX IS A POINTER TO A MATRIX
+	//2ND PARAM = THE FOV
+	//3RD PARAM = THE WINDOW WIDTH AND HEIGHT
+	//4TH PARAM = THE NEAR CLIP PLANE
+	//5TH PARAM = THE FAR CLIP PLANE
+	D3DXMatrixPerspectiveFovLH(&m_matProjection,(float)D3DX_PI*0.25f,vp.Width/(float)vp.Height,0.1f,100.0f);
+	//===============================================
+
+	/*m_pViewMatrixVariable = 
+		m_pEffect->GetVariableByName*/
 	
 	return true;
 }
