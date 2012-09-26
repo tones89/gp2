@@ -34,7 +34,8 @@ CGameApplication::~CGameApplication(void)
 		m_pRenderTargetView->Release();
 
 	if(m_pDepthStencilTexture)
-		m_pRenderTargetView->Release();
+	m_pDepthStencilTexture->Release();
+
 
 	if(m_pDepthStencilView)
 		m_pDepthStencilView->Release();
@@ -93,7 +94,7 @@ bool CGameApplication::initGame()
 #endif
 	ID3D10Blob* pErrors = NULL;
 
-	if (FAILED(D3DX10CreateEffectFromFile(TEXT("ScreenSpace.fx"),
+	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
 		&pErrors,NULL )))
 	{
