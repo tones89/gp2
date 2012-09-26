@@ -32,7 +32,7 @@ RasterizerState DisableCulling
 	CullMode = NONE;
 };
 
-technique10 Render
+technique10 Render 
 {
 	pass P0
 	{

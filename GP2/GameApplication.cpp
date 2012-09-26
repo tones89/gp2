@@ -88,12 +88,21 @@ bool CGameApplication::initGame()
 	bd.CPUAccessFlags = 0;	//USED TO SPECIFY IF THE BUFFER CAN BE READ/WRITTEN BY CPU. ZERO MEANS THE CPU CANT ACCESS THE BUFFER ONCE CREATED
 	bd.MiscFlags = 0;	//USED FOR ADDITIONAL OPTIONS, 0 MEANING NO ADDITIONAL OPTIONS
 
-	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+	//=========USED TO PUT FX LOADING INTO DEBUG MODE FOR MORE INFORMATION=========
+	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;	//
 #if defined (DEBUG) ||defined(_DEBUG )
 	dwShaderFlags |= D3D10_SHADER_DEBUG;
 #endif
+	//==============================================================================
+
 	ID3D10Blob* pErrors = NULL;
 
+	//=========LOADING THE EFFECT=========
+	//1ST PARAM = THE FILENAME OF THE EFFECT
+	//4TH PARAM = THE SHADER PROFILE WE ARE USING
+	//5TH PARAM = THE SHADER FLAGS USED FOR DEBUG INFO
+	//7TH PARAM = POINTER TO A DEVICE WHICH WILL USE THIS EFFECT
+	//10TH PARAM = POINTER TO A MEM ADDRESS OF AN OBJECT
 	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
 		&pErrors,NULL )))
@@ -102,8 +111,9 @@ bool CGameApplication::initGame()
 			"error",MB_OK);
 		return false;
 	}
+	//======================================
 
-	m_pTechnique=m_pEffect->GetTechniqueByName("Render");
+	m_pTechnique=m_pEffect->GetTechniqueByName("Render");	//RETRIEVE THE TECHNIQUE FROM THE EFFECT OBJECT USING ITS NAME
 
 	//=========DEFINES A SIMPLE ARRAY OF 3 VERTICES=========
 	Vertex vertices[] = 
@@ -126,27 +136,51 @@ bool CGameApplication::initGame()
 	if (FAILED(m_pD3D10Device->CreateBuffer(&bd,&initData,&m_pVertexBuffer)))
 			return false;
 	//=======================================
+	
+	//=========USED TO HOLD INPUT LAYOUT(USED TO DESCRIBE VERTEX TO PIPELINE)=========
+	//1ST PARAM = STRING TO SPECIFY SEMANTIC THAT THIS ELEMENT IS BOUND TO. ALLOWS VERTICES FROM BUFFER TO VERTICES PASSED TO VERTEX SHADER
+	//2ND PARAM = INDEX OF SEMANTIC. USED TO BIND VERTEX TO PIPELINE
+	//3RD PARAM = FORMAT OF DATA, 3 32BIT COMPONENTS ALL FLOATS 
+	//5TH PARAM = STARTING OFFSET OF THE ELEMENT, WILL INCREASE AS ARRAY INCREASES
 	D3D10_INPUT_ELEMENT_DESC layout[] = 
 	{
 
 		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,
 		D3D10_INPUT_PER_VERTEX_DATA,0},
 	};
+	//=================================================================================
 
-	UINT numElements = sizeof(layout)/sizeof(D3D10_INPUT_ELEMENT_DESC);
+	//=========CREATING INPUT LAYOUT  OBJECT=========
+	UINT numElements = sizeof(layout)/sizeof(D3D10_INPUT_ELEMENT_DESC);	
 	D3D10_PASS_DESC PassDesc;
 	m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
 
-	if (FAILED(m_pD3D10Device->CreateInputLayout(layout,numElements,PassDesc.pIAInputSignature,
-		PassDesc.IAInputSignatureSize,&m_pVertexLayout)))
+	//1ST PARAM = AN ARRAY OF INPUT DESCPRIPTIONS
+	//2ND PARAM = NUM OF ELEMENTS IN INPUT ELEMENTS ARRAY 
+	//3RD PARAM = POINTER TO COMPILED SHADER CODE
+	//4TH PARAM =THE SIZE OF THE ABOVE SHADER CODE
+	//5TH PARAM = POINTER TO A MEM ADDRESS OF INPUT LAYOUT OBJECT
+	if (FAILED(m_pD3D10Device->CreateInputLayout(layout,
+		numElements,
+		PassDesc.pIAInputSignature,
+		PassDesc.IAInputSignatureSize,
+		&m_pVertexLayout)))
 	{
 		return false;
 	}
+	//==================================================
 
-	m_pD3D10Device->IASetInputLayout(m_pVertexLayout);
+	m_pD3D10Device->IASetInputLayout(m_pVertexLayout);	//PASS THIS INPUT LAYOUT TO TO THE INPUT ASSEMBLER
 
-	UINT stride = sizeof(Vertex);
+	UINT stride = sizeof(Vertex);	
 	UINT offset = 0;
+
+	//=========USES TO BIND ONE ORE MANY BUFFERS TO THE  INPUT ASSEMBLER=========
+	//1ST PARAM = THE INPUT SLOT TO BIND( O INDICATES THE FIRST SLOT). WE CAN BIND IT TO DIFF SLOTS
+	//2ND PARAM = NUM OF BUFFERS TO BE BOUND
+	//3RD PARAM = A POINTER TO A MEM ADDRESS OF BUFFER
+	//4TH PARAM = AN ARRAY OF STRIDES FOR THE BUFFER
+	//5TH PARAM = AN ARRAY OF OFFSETS FOR THE BUFFER
 	m_pD3D10Device->IASetVertexBuffers(0,1,&m_pVertexBuffer,&stride,&offset);
 
 	//=========SETTING UP THE CAMERA=========
