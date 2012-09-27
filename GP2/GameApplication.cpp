@@ -27,6 +27,9 @@ CGameApplication::~CGameApplication(void)
 	if(m_pVertexBuffer)
 		m_pVertexBuffer->Release();
 
+	if(m_pIndexBuffer)
+		m_pIndexBuffer->Release();
+
 	if(m_pEffect)
 		m_pEffect->Release();
 
@@ -81,12 +84,15 @@ bool CGameApplication::init()
 
 bool CGameApplication::initGame()
 {
+
+	//=========VARS FOR THE VERTEX BUFFER=========
 	D3D10_BUFFER_DESC bd;	
 	bd.Usage = D3D10_USAGE_DEFAULT;		//DESC OF HOW THE BUFFER IS READ/WRITTEN TO, DEFAULT STIPULATES THAT THE RESOURCE WILL BE WRITTEN BY CPU
-	bd.ByteWidth = sizeof(Vertex)*3;	//THE SIZE OF BUFFER( IN THIS CASE 3 VERTICES)
+	bd.ByteWidth = sizeof(Vertex)*4;	//THE SIZE OF BUFFER( IN THIS CASE 3 VERTICES)
 	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;	//THE TYPE OF BUFFER, IN THIS CASE VERTEX BUFFER
 	bd.CPUAccessFlags = 0;	//USED TO SPECIFY IF THE BUFFER CAN BE READ/WRITTEN BY CPU. ZERO MEANS THE CPU CANT ACCESS THE BUFFER ONCE CREATED
 	bd.MiscFlags = 0;	//USED FOR ADDITIONAL OPTIONS, 0 MEANING NO ADDITIONAL OPTIONS
+	//=============================================
 
 	//=========USED TO PUT FX LOADING INTO DEBUG MODE FOR MORE INFORMATION=========
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;	//
@@ -118,10 +124,11 @@ bool CGameApplication::initGame()
 	//=========DEFINES A SIMPLE ARRAY OF 3 VERTICES=========
 	Vertex vertices[] = 
 	{
-		D3DXVECTOR3(0.0f,0.5f,0.5f),
-		D3DXVECTOR3(0.5f,-0.5f,-0.5f),
+		D3DXVECTOR3(-0.5f,0.5f,0.5f),
+		D3DXVECTOR3(0.5f,0.5f,0.5f),
 		D3DXVECTOR3(-0.5,-0.5f,0.5f),
-		
+		D3DXVECTOR3(0.5f,-0.5f,0.5f),
+
 	};
 	//=====================================================
 
@@ -137,6 +144,32 @@ bool CGameApplication::initGame()
 			return false;
 	//=======================================
 	
+	//=========VARS FOR THE INDEX BUFFER=========
+	D3D10_BUFFER_DESC iBd;	//SETTING THE DESCRIPTION OF THE BUFFER
+	iBd.Usage = D3D10_USAGE_DEFAULT;		//DESC OF HOW THE BUFFER IS READ/WRITTEN TO, DEFAULT STIPULATES THAT THE RESOURCE WILL BE WRITTEN BY CPU
+	iBd.ByteWidth = sizeof(int)*6;	//THE SIZE OF BUFFER)
+	iBd.BindFlags = D3D10_BIND_INDEX_BUFFER;	//THE TYPE OF BUFFER, IN THIS CASE INDEX BUFFER
+	iBd.CPUAccessFlags = 0;	//USED TO SPECIFY IF THE BUFFER CAN BE READ/WRITTEN BY CPU. ZERO MEANS THE CPU CANT ACCESS THE BUFFER ONCE CREATED
+	iBd.MiscFlags = 0;	//USED FOR ADDITIONAL OPTIONS, 0 MEANING NO ADDITIONAL OPTIONS
+	//==========================================
+
+	//=========CREATING THE INITAL DATA FOR THE INDEX BUFFER=========
+	int indices[]={0,1,2,1,2,3,};
+	//===============================================================
+
+	D3D10_SUBRESOURCE_DATA IndexBufferInitialData;	
+	IndexBufferInitialData.pSysMem = indices;	//POINTER TO THE INITIALIZATION DATA
+	
+	//=========CREATING THE BUFFER=========
+	//1ST PARAM = POINTER TO BUFFER DESCRIPTION
+	//2ND PARAM = POINTER TO RESOURCE DATA
+	//3RD PARAM = A MEMORY ADDRESS OF A POINTER TO A BUFFER
+	if(FAILED(m_pD3D10Device->CreateBuffer(&iBd,&IndexBufferInitialData,&m_pIndexBuffer)))
+		return false;
+	//======================================
+
+	m_pD3D10Device->IASetIndexBuffer(m_pIndexBuffer,DXGI_FORMAT_R32_UINT,0);
+
 	//=========USED TO HOLD INPUT LAYOUT(USED TO DESCRIBE VERTEX TO PIPELINE)=========
 	//1ST PARAM = STRING TO SPECIFY SEMANTIC THAT THIS ELEMENT IS BOUND TO. ALLOWS VERTICES FROM BUFFER TO VERTICES PASSED TO VERTEX SHADER
 	//2ND PARAM = INDEX OF SEMANTIC. USED TO BIND VERTEX TO PIPELINE
@@ -185,8 +218,8 @@ bool CGameApplication::initGame()
 
 	//=========SETTING UP THE CAMERA=========
 	D3DXVECTOR3 cameraPos(0.0f,0.0f,-10.0f);
-	D3DXVECTOR3 cameraLook(0.0f,0.0f,1.0f);
-	D3DXVECTOR3 cameraUp(0.0f,0.1f,0.0f);
+	D3DXVECTOR3 cameraLook(0.0f,0.0f,0.0f);
+	D3DXVECTOR3 cameraUp(0.0f,1.0f,0.0f);
 	//==========================================
 
 	//THIS FUNCTION CALCULATES THE VIEW MATRIX USING THE CAM VARS FROM ABOVE;
@@ -216,7 +249,7 @@ bool CGameApplication::initGame()
 		m_pEffect->GetVariableByName("matProjection")->AsMatrix();
 	//===========================================================================
 
-	m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);
+	m_pProjectionMatrixVariable->SetMatrix((float*)m_matProjection);
 	
 	//=========USED TO SET THE SET THE POS,ROT AND SCALE VECTORS OF THE OBJECT
 	m_vecPosition = D3DXVECTOR3(0.0f,0.0f,0.0f);
@@ -435,7 +468,7 @@ void CGameApplication::render()
 	
 	//=========DRAW CALL'S MUST GO WITHIN HERE=========
 
-	m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);	//SENDS THE VIEW MATRIX TO THE EFFECT
+	m_pViewMatrixVariable->SetMatrix((float*)m_matView);	//SENDS THE VIEW MATRIX TO THE EFFECT
 
 	m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
 
@@ -445,7 +478,7 @@ void CGameApplication::render()
 	for(UINT p = 0; p<techniqueDesc.Passes; ++p)
 	{
 		m_pTechnique->GetPassByIndex(p)->Apply(0);
-		m_pD3D10Device->Draw(3,0);
+		m_pD3D10Device->DrawIndexed(6,0,0);
 	}
 	m_pSwapChain->Present(0,0);	//USED TO FLIP THE SWAP CHAIN
 
