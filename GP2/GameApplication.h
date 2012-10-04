@@ -50,6 +50,8 @@ private:
 
 	ID3D10EffectMatrixVariable* m_pProjectionMatrixVariable;
 
+	ID3D10ShaderResourceView* m_pDiffuseTexture;
+
 	D3DXMATRIX m_matView;
 
 	D3DXMATRIX m_matProjection;

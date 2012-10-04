@@ -4,6 +4,7 @@ struct Vertex
 {
 	D3DXVECTOR3 Pos;
 	D3DXCOLOR colour;
+	D3DXVECTOR2 texCoords;
 };
 
 
@@ -17,6 +18,7 @@ CGameApplication::CGameApplication(void)
 	m_pVertexBuffer=NULL;
 	m_pDepthStencilView=NULL;
 	m_pDepthStencilTexture=NULL;
+	m_pDiffuseTexture=NULL;
 }
 //====================================
 
@@ -56,6 +58,9 @@ CGameApplication::~CGameApplication(void)
 
 	if(m_pVertexLayout)
 		m_pVertexLayout->Release();
+
+	if(m_pDiffuseTexture)
+		m_pDiffuseTexture->Release();
 
 	if(m_pWindow)
 	{
@@ -101,7 +106,7 @@ bool CGameApplication::initGame()
 	//5TH PARAM = THE SHADER FLAGS USED FOR DEBUG INFO
 	//7TH PARAM = POINTER TO A DEVICE WHICH WILL USE THIS EFFECT
 	//10TH PARAM = POINTER TO A MEM ADDRESS OF AN OBJECT
-	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
+	if (FAILED(D3DX10CreateEffectFromFile(TEXT("Texture.fx"),
 		NULL,NULL,"fx_4_0",dwShaderFlags,0,m_pD3D10Device,NULL,NULL,&m_pEffect,
 		&pErrors,NULL )))
 	{
@@ -128,15 +133,34 @@ bool CGameApplication::initGame()
 
 	Vertex vertices[] = 
 	{
-		{D3DXVECTOR3(-0.5f,0.5f,-0.5f),D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(0.5f,-0.5f,-0.5f),  D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(-0.5,-0.5f,-0.5f), D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(0.5f,0.5f,-0.5f), D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
+		//=========FRONTFACE=========
+		{D3DXVECTOR3(-0.5f,0.5f,-0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(0.0f,0.0f)},
 
-		{D3DXVECTOR3 (-0.5f,0.5f,0.5f),D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(0.5f,-0.5f,0.5f),  D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(-0.5,-0.5f,0.5f), D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
-		{D3DXVECTOR3(0.5f,0.5f,0.5f), D3DXCOLOR(0.5f,0.0f,0.0f,1.0f)},
+		{D3DXVECTOR3(0.5f,-0.5f,-0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(1.0f,1.0f)},
+		
+		{D3DXVECTOR3(-0.5,-0.5f,-0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(0.0f,1.0f)},
+		
+		{D3DXVECTOR3(0.5f,0.5f,-0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(1.0f,0.0f)},
+		//==========================
+
+		//=========BACKFACE=========
+		{D3DXVECTOR3 (-0.5f,0.5f,0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(0.0f,0.0f)},
+		
+		{D3DXVECTOR3(0.5f,-0.5f,0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(-1.0f,-1.0f)},
+		
+		{D3DXVECTOR3(-0.5,-0.5f,0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(0.0f,-1.0f)},
+		
+		{D3DXVECTOR3(0.5f,0.5f,0.5f),
+				D3DXCOLOR(0.5f,0.0f,0.0f,1.0f),D3DXVECTOR2(-1.0f,0.0f)},
+		//============================
+
 	};
 	//=====================================================
 
@@ -200,6 +224,9 @@ bool CGameApplication::initGame()
 	//3RD PARAM = FORMAT OF DATA, 3 32BIT COMPONENTS ALL FLOATS 
 	//5TH PARAM = STARTING OFFSET OF THE ELEMENT, WILL INCREASE AS ARRAY INCREASES
 		{"COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,12,
+		D3D10_INPUT_PER_VERTEX_DATA,0},
+
+		{"TEXCOORD",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,28,
 		D3D10_INPUT_PER_VERTEX_DATA,0},
 	};
 	//=================================================================================
@@ -283,6 +310,22 @@ bool CGameApplication::initGame()
 	m_pWorldMatrixVariable=
 		m_pEffect->GetVariableByName("matWorld")->AsMatrix();
 	//=====================================================================================
+
+
+	//=========LOAD SHADER RESOURCE FROM FILE=========
+	//1ST PARAM = A POINTER TO THE DEVICE
+	//2ND PARAM = NAME OF THE FILE CONTAINING THE SHADER RESOURCE
+	//3RD PARAM = (OPTIONAL) USED TO ID CHARACTERISTICS OF TEXTURES
+	//4TH PARAM = POINTER TO THREAD PUMP INTERFACE- IF NULL FUNCTION WILL RUN SYNCHRONIOUSLY
+	//5TH PARAM = ADDRESS OF POINTER TO THE SHADER RESOURCE VIEW
+	//6TH PARAM = POINTER TO RETURN VAL.
+	
+	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device,
+		TEXT("rockwall.jpg"),NULL,NULL,&m_pDiffuseTexture,NULL)))
+	{
+		MessageBox(NULL,TEXT("Can't load the texture"),TEXT("Error"),MB_OK);
+		return false;
+	}
 
 	return true;
 
