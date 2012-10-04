@@ -321,11 +321,14 @@ bool CGameApplication::initGame()
 	//6TH PARAM = POINTER TO RETURN VAL.
 	
 	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device,
-		TEXT("rockwall.jpg"),NULL,NULL,&m_pDiffuseTexture,NULL)))
+		TEXT("face.png"),NULL,NULL,&m_pDiffuseTexture,NULL)))
 	{
 		MessageBox(NULL,TEXT("Can't load the texture"),TEXT("Error"),MB_OK);
 		return false;
 	}
+
+	m_pDiffuseTextureVariable = m_pEffect->
+		GetVariableByName("diffuseTexture")->AsShaderResource();
 
 	return true;
 
@@ -536,6 +539,8 @@ void CGameApplication::render()
 	m_pViewMatrixVariable->SetMatrix((float*)m_matView);	//SENDS THE VIEW MATRIX TO THE EFFECT
 
 	m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
+
+	m_pDiffuseTextureVariable->SetResource(m_pDiffuseTexture);
 
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	m_pTechnique->GetDesc(&techniqueDesc);
