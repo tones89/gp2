@@ -237,7 +237,6 @@
 
 //---------------------------------------------------------------------------------------
 //Utilities Includes
-#include <fbxsdk/utils/fbxdeformationsevaluator.h>
 #include <fbxsdk/utils/fbxprocessor.h>
 #include <fbxsdk/utils/fbxprocessorxref.h>
 #include <fbxsdk/utils/fbxprocessorxrefuserlib.h>

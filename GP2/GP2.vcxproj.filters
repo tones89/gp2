@@ -125,9 +125,6 @@
     <ClInclude Include="G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---LABS---\Lab6\CPPS,HEADERS\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="G:\Program Files (x86)\2013.3\include\fbxsdk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---LABS---\Lab6\CPPS,HEADERS\Win32Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>

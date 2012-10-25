@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---PROGRAMS---\Fbx\include;$(IncludePath)</IncludePath>
-    <LibraryPath>G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---PROGRAMS---\Fbx\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -52,13 +52,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)\include;$(FBXSDK_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_Dir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d10.lib;d3dx10.lib;fbxsdk-2013.2.lib;fbxsdk-2013.2d.lib;fbxsdk-2013.2-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBXSDK_DIR)\vs2010\x86;$(DXSDK_Dir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d10.lib;d3dx10.lib;fbxsdk-2013.2d.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,7 +114,6 @@
     <ClInclude Include="G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---LABS---\Lab6\CPPS,HEADERS\TransformComponent.h" />
     <ClInclude Include="G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---LABS---\Lab6\CPPS,HEADERS\Vertex.h" />
     <ClInclude Include="G:\---UNI---\---SEMESTER1---\---GAMES_PROGRAMMING2---\---LABS---\Lab6\CPPS,HEADERS\Win32Window.h" />
-    <ClInclude Include="G:\Program Files (x86)\2013.3\include\fbxsdk.h" />
     <ClInclude Include="GameApplication.h" />
     <ClInclude Include="Win32Window.h" />
   </ItemGroup>
