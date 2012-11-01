@@ -22,52 +22,37 @@
     <Filter Include="Effects">
       <UniqueIdentifier>{e7e0afe1-4082-46ca-bf80-1af47b3ae17f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{3fb634dd-d611-4b47-aaa6-a9bbb3e00cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cams_Lights">
+      <UniqueIdentifier>{287f3a82-8c9c-4622-89f6-e92f752b8d5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{18901387-d0bd-4d55-8665-bb19734922aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ambient.fx">
+      <Filter>Effects</Filter>
+    </None>
+    <None Include="diffuse.fx">
+      <Filter>Effects</Filter>
+    </None>
     <None Include="ScreenSpace.fx">
       <Filter>Effects</Filter>
     </None>
-    <None Include="Transform.fx">
+    <None Include="Specular.fx">
       <Filter>Effects</Filter>
     </None>
     <None Include="Texture.fx">
       <Filter>Effects</Filter>
     </None>
+    <None Include="Transform.fx">
+      <Filter>Effects</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Joypad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Win32Window.cpp">
       <Filter>Window</Filter>
     </ClCompile>
@@ -77,54 +62,57 @@
     <ClCompile Include="GameApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Joypad.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshComponent.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialComponent.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryComponent.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>Cams_Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Cams_Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLightComponent.cpp">
+      <Filter>Cams_Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefaultEffect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fbxsdk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Joypad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Win32Window.h">
@@ -132,6 +120,60 @@
     </ClInclude>
     <ClInclude Include="GameApplication.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Joypad.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Cams_Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionLightComponent.h">
+      <Filter>Cams_Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>Cams_Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryComponent.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialComponent.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultEffect.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="fbxsdk.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
